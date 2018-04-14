@@ -1,0 +1,42 @@
+server {
+    listen         80;
+    client_max_body_size 10m;
+    client_body_timeout 120s;
+
+   location / {
+        proxy_pass http://web;
+
+        include /etc/nginx/shared_proxy.conf;
+
+        access_log /var/log/nginx/web.access.log;
+        error_log /var/log/nginx/web.error.log;
+    }
+
+    location ^~ /uploads/ {
+        autoindex off;
+        root /;
+
+        access_log /var/log/nginx/uploads.access.log;
+        error_log /var/log/nginx/uploads.error.log;
+    }
+
+
+    location /api/ {
+        proxy_pass http://api:8080/api/;
+
+        include /etc/nginx/shared_proxy.conf;
+
+        access_log /var/log/nginx/api.access.log;
+        error_log /var/log/nginx/api.error.log;
+    }
+
+
+    location /mailhog/ {
+        proxy_pass http://mailhog:8025/api/;
+
+        include /etc/nginx/shared_proxy.conf;
+
+        access_log /var/log/nginx/mailhog.access.log;
+        error_log /var/log/nginx/mailhog.error.log;
+    }
+}
